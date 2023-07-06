@@ -1,0 +1,27 @@
+package com.prjct.emarket.service;
+
+import java.time.LocalDate;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
+
+import com.prjct.emarket.dao.Customerdao;
+import com.prjct.emarket.dto.Customer;
+import com.prjct.emarket.helper.SendmailMerchant;
+
+@Service
+public class CustomerService {
+
+	@Autowired
+	Customerdao customerdao;
+	
+	@Autowired
+	SendmailMerchant mail;
+
+	public String Signup(Customer customer, String date, ModelMap model) 
+	{
+		customer.setDob(LocalDate.parse(date)); 
+	}
+
+}

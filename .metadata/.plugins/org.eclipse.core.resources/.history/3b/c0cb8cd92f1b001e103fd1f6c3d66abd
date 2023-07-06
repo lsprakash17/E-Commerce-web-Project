@@ -1,0 +1,61 @@
+package com.prjct.emarket.service;
+
+import java.time.LocalDate;
+import java.util.Random;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
+
+import com.prjct.emarket.dao.Customerdao;
+import com.prjct.emarket.dto.Customer;
+import com.prjct.emarket.helper.SendmailMerchant;
+
+@Service
+public class CustomerService {
+
+	@Autowired
+	Customerdao dao;
+	
+	@Autowired
+	SendmailMerchant mail;
+
+	public String Signup(Customer customer, String date, ModelMap model) 
+	{
+		customer.setDob(LocalDate.parse(date)); 
+		if (dao.findByEmail(customer.getEmail()) != null
+				|| dao.findByMobile(customer.getMobile()) != null)
+		{
+			model.put("fail", "Email or Mobile Should not be repeated");
+			return "CustomerSignup";
+	    }
+		String token="abc"+new Random().nextInt(10000,99999);
+		customer.setToken(token);
+		if(mail.sendLink(customer))
+		{
+		dao.save(customer);
+		model.put("pass","veryfication Link sent to Email click to Verify");
+		return "CustomerLogin";
+		}
+		else
+		{
+			model.put("fail", "Something went wrong check mail");
+			return "CustomerSignup";
+		}
+}
+
+	public String verify(String email, String token,ModelMap model) {
+		Customer customer = dao.findByEmail(email);
+		if (customer.getToken().equals(token))
+		{
+			customer.setStatus(true);
+			customer.setToken(token);
+			dao.save(customer);
+			model.put("pass", "Account Verified SuccessFully");
+			return "CustomerLogin";
+		} else {
+			model.put("fail", "Account not created otp entered invalid");
+			return "CustomerLogin";
+		}
+	}
+}

@@ -1,0 +1,6 @@
+<%@include file="../jspf/Header.jspf" %>
+<div class="container">
+<h1>This is my home</h1>
+<a href="/admin/login" >Admin Login</a>
+</div>
+<%@include file="../jspf/Header.jspf" %>

@@ -1,0 +1,16 @@
+package com.prjct.emarket.service;
+
+import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
+
+import com.prjct.emarket.dto.Customer;
+
+@Service
+public class CustomerService {
+
+	public String Signup(Customer customer, String date, ModelMap model) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

@@ -1,0 +1,20 @@
+package com.prjct.emarket.dao;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.prjct.emarket.dto.Merchant;
+import com.prjct.emarket.repository.MerchantRepository;
+
+@Component
+public class Merchantdao 
+{
+	@Autowired
+    MerchantRepository merchantRepository;
+	
+	public Merchant  findByEmail(String email)
+	{
+		return merchantRepository.findById(email);
+	}
+
+}

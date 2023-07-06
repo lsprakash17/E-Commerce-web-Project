@@ -1,0 +1,13 @@
+package com.prjct.emarket.dto;
+
+import jakarta.persistence.Entity;
+import lombok.Data;
+
+@Entity
+@Data
+public class Merchant 
+{
+private String name;
+private String email;
+
+}

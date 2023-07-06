@@ -1,0 +1,21 @@
+package com.prjct.emarket.helper;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;import com.prjct.emarket.dao.Merchantdao;
+import com.prjct.emarket.dto.Merchant;
+
+@Service
+public class SendmailMerchant
+{
+	
+	@Autowired
+	JavaMailSender
+	
+public void sendOtp(Merchant merchant)
+{
+	//logic
+	
+	
+}
+}
