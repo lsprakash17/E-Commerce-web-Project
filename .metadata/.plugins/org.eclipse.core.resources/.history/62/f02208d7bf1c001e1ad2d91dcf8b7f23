@@ -1,0 +1,43 @@
+package com.prjct.emarket.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
+
+import com.prjct.emarket.helper.Login;
+import com.prjct.emarket.repository.productrepository;
+
+import jakarta.servlet.http.HttpSession;
+
+@Service
+public class AdminService
+{
+	@Autowired
+	productrepository productsrepo;
+		
+	public String Login(Login login,ModelMap map,HttpSession session)
+	{
+		if(login.getEmail().equals("admin"))
+		{
+			if(login.getPassword().equals("admin"))
+			{
+				session.setAttribute("admin", "admin");
+				map.put("pass", "Login Success");
+				return "AdminHome";
+			}
+			else
+			{
+				map.put("fail","Incorrect Password");
+			}
+		}
+		else
+		{
+			map.put("fail", "Incorrect Email");
+		}
+		return "Login";
+	}
+
+	public static String fetchAllProducts(ModelMap model) {
+		List<Product> product=productrepo
+	}
+}

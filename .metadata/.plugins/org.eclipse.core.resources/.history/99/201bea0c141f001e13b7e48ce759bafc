@@ -1,0 +1,28 @@
+<%@page import="org.apache.commons.codec.binary.Base64"%>
+<%@page import="com.prjct.emarket.dto.Product"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<%Product product= (Product)request.getAttribute("product"); %>
+<form action="/merchant/product-update" method="post" enctype="multipart/form-data">
+Name: <input type="text" name="name" value="<%=product.getName()%>"> <br>
+Price: <input type="text" name="price" value="<%=product.getPrice()%>"> <br>
+Quality: <input type="text" name="quality" value="<%=product.getQuantity()%>"> <br>
+<%String base64 = Base64.encodeBase64String(product.getImage());%>
+				     <img src="data:image/jpeg;base64,<%=base64%>" alt="Picture"
+				style="width: 100px; height: auto;">
+Image: <input type="file" name="pic" value="data:image/jpeg;base64,<%=base64%>" readonly="readonly"> <br>
+Description: <input type="text" name="description"><br>
+<button>Update</button> <button type="reset">Cancel</button>
+</form>
+<br>
+<a href="/merchant/product-view"><button>Back</button> </a>
+</body>
+</body>
+</html>

@@ -6,7 +6,9 @@ import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.prjct.emarket.dto.Merchant;
+import com.prjct.emarket.dto.Product;
 import com.prjct.emarket.service.MerchantService;
 
 import jakarta.servlet.http.HttpSession;
@@ -87,5 +90,79 @@ public class MerchantController
 	 return merchantService.loginMerchant(email,password,model,session);
 	}
 	
+	@GetMapping("/product-add")
+	public String gotoAddProductpage(HttpSession session,ModelMap model)
+	{
+		if(session.getAttribute("merchant")==null)
+		{
+			model.put("fail", "session expired login again");
+			return "MerchantLogin";
+		}
+		else
+		{
+			return "AddProduct";
+		}
+	}
+	@PostMapping("/product-add")
+	public String  addProduct(HttpSession session,ModelMap model,Product product,@RequestParam MultipartFile pic) throws IOException
+	{
+	if(session.getAttribute("merchant")==null)
+	{
+		model.put("fail", "session expired login again");
+		return "MerchantLogin";
+	}
+	else
+	{
+		return merchantService.addProduct(product,model,pic,session);
+	}
 	
+}
+	@GetMapping("/product-view")
+	public String fetchAllProducts(HttpSession session,ModelMap model)
+	{
+		if(session.getAttribute("merchant")==null)
+		{
+			model.put("fail", "something went wrong");
+			
+			return "MerchantLogin";
+		}
+		return merchantService.fetchAllProducts(session,model);
+	}
+	@GetMapping("/product-delete/{id}")
+	public String deleteProduct(@PathVariable int id,ModelMap model,HttpSession session)
+	{
+		if(session.getAttribute("merchant")==null)
+		{
+			model.put("fail", "something went wrong");
+			
+			return "MerchantLogin";
+		}
+		return merchantService.deleteProduct(id,model,session);
+	}
+	@GetMapping("/product-update/{id}")
+	public String updateProduct(@PathVariable int id,HttpSession session,ModelMap model)
+	{
+		if(session.getAttribute("merchant")==null)
+		{
+			model.put("fail", "Session Expied Login Again");
+			return "MerchantLogin";
+		}
+		else {
+			return merchantService.updateProduct(model,id);
+		}
+	}
+	
+
+	@PostMapping("/product-update")
+	public String updateProduct(Product product,HttpSession session,ModelMap model)
+	{
+		if(session.getAttribute("merchant")==null)
+		{
+			model.put("fail", "Session Expied Login Again");
+			return "MerchantLogin";
+		}
+		else {
+			return merchantService.updateProduct(model,product,session);
+		}
+}
 }

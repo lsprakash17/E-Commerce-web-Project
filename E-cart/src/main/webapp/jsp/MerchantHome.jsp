@@ -8,6 +8,11 @@
 </head>
 <body>
 ${pass}
+${fail}
  <a>Logout</a>
+ <br>
+ <a href="/merchant/product-add">Add Product</a>
+ <a href="/merchant/product-view"><button>View All Products</button></a>
+ <a href="/logout"><button>Logout</button></a>
 </body>
 </html>

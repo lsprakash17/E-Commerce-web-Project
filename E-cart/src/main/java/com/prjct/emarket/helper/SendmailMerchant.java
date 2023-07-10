@@ -55,7 +55,7 @@ public class SendmailMerchant {
 				gender = "Mr.";
 			else
 				gender = "Ms.";
-			String link=  "http://localhost:8080/customer/verifyotp/'" + customer.getEmail() +"/"+ customer.getToken()   ;
+			String link=  "http://localhost:8080/customer/verifyotp/" + customer.getEmail() +"/"+ customer.getToken();
 			String content = "<h1>Hello " + gender + " " + customer.getName() + ",<h1>"
 					+ "<h1>Thank you for showing interest in creating an account with us we look forward to collabrate Click the "
 					+ "below Link to verify your account</h1>" + "<h1>OTP: <a href='"+link+"'>click here</a></h1>";
@@ -86,7 +86,7 @@ public class SendmailMerchant {
 			String link=  "http://localhost:8080/customer/Resetpasssword/'" + customer.getEmail() +"/"+ customer.getToken()   ;
 			String content = "<h1>Hello " + gender + " " + customer.getName() + ",<h1>"
 					+ "<h1>Thank you for showing interest in creating an account with us we look forward to collabrate Click the "
-					+ "below Link to verify your account</h1>" + "<h1>OTP: <a href='"+link+"'>click here</a></h1>";
+					+ "below Link to verify your account</h1>" + "<h1>OTP: <a href="+link+">click here</a></h1>";
 			helper.setText(content, true);
 
 			MailSender.send(mimeMessage);
