@@ -1,0 +1,280 @@
+package com.prjct.emarket.service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
+
+import com.prjct.emarket.dao.Customerdao;
+import com.prjct.emarket.dto.Customer;
+import com.prjct.emarket.dto.Item;
+import com.prjct.emarket.dto.Merchant;
+import com.prjct.emarket.dto.Product;
+import com.prjct.emarket.dto.ShoppingCart;
+import com.prjct.emarket.helper.Login;
+import com.prjct.emarket.helper.SendmailMerchant;
+import com.prjct.emarket.repository.ProductRepository;
+
+import jakarta.servlet.http.HttpSession;
+
+@Service
+public class CustomerService {
+
+	@Autowired
+	Customerdao dao;
+	
+	@Autowired
+	SendmailMerchant mail;
+   
+	@Autowired
+	ProductRepository productRepository;
+	
+	@Autowired
+	Item item;
+	
+	@Autowired
+	ShoppingCart cart;
+	
+	public String Signup(Customer customer, String date, ModelMap model) 
+	{
+		customer.setDob(LocalDate.parse(date)); 
+		if (dao.findByEmail(customer.getEmail()) != null
+				|| dao.findByMobile(customer.getMobile()) != null)
+		{
+			model.put("fail", "Email or Mobile Should not be repeated");
+			return "CustomerSignup";
+	    }
+		String token="abc"+new Random().nextInt(10000,99999);
+		customer.setToken(token);
+		if(mail.sendLink(customer))
+		{
+		dao.save(customer);
+		model.put("pass","veryfication Link sent to Email click to Verify");
+		return "CustomerLogin";
+		}
+		else
+		{
+			model.put("fail", "Something went wrong check mail");
+			return "CustomerSignup";
+		}
+}
+
+	public String verify(String email, String token,ModelMap model) {
+		Customer customer = dao.findByEmail(email);
+		if (customer.getToken().equals(token))
+		{
+			customer.setStatus(true);
+			customer.setToken(null);
+			dao.save(customer);
+			model.put("pass", "Account Verified SuccessFully");
+			return "CustomerLogin";
+		} else {
+			model.put("fail", "Account not created otp entered invalid");
+			return "CustomerLogin";
+		}
+	}
+
+	public String login(Login login, HttpSession session, ModelMap model) {
+		 Customer customer=dao.findByEmail(login.getEmail());
+		 if(customer==null)
+		 {   
+			 model.put("fail", "Icorrect password");
+			 return "CustomerLogin";
+		 }
+		 else
+		 {
+			 if(customer.getPassword().equals(login.getPassword()))
+			 {
+				 if(customer.isStatus())
+				 {
+				 session.setAttribute("customer", customer);
+				 model.put("pass", "Login Success");
+				 return "CustomerHome";
+			 }
+				 else
+				 {
+					 model.put("fail", "Mail verification pending");
+					 return "CustomerLogin";
+				 }
+			 }
+			 else
+			 {   
+				 model.put("fail", "Icorrect password");
+				 return "CustomerLogin";
+			 }
+		 }
+}
+
+	public String forgotlink(String email,ModelMap model) {
+		Customer customer = dao.findByEmail(email);
+		 if(customer==null)
+		 {   
+			 model.put("fail", "Icorrect password");
+			 return "CustomerLogin";
+		 }
+		 else
+		 {
+			 String token="abc"+new Random().nextInt(10000,99999);
+				customer.setToken(token);
+				if(mail.sendResetLink(customer))
+				{
+				dao.save(customer);
+				model.put("pass","veryfication Link sent to Email click to Verify");
+				return "CustomerLogin";
+				}
+				else
+				{
+					model.put("fail", "Something went wrong check mail");
+					return "CustomerSignup";
+				}
+		 }
+		
+	}
+
+	public String ResetPassword(String email, String token, ModelMap model) {
+		Customer customer = dao.findByEmail(email);
+		if (customer.getToken().equals(token))
+		{
+			customer.setStatus(true);
+			customer.setToken(null);
+			dao.save(customer);
+			model.put("pass", dao.save(customer));
+			return "CustomerResetpassword";
+		} else 
+		{
+			model.put("fail", "Something went wrong");
+			return "CustomerLogin";
+		}
+	}
+
+	public String sendForgotPass(String email, ModelMap model,String password)
+	{
+		Customer customer = dao.findByEmail(email);
+		customer.setPassword(password);
+		dao.save(customer);
+
+		model.put("pass", "Password Reset Success");
+		return "CustomerLogin";
+	}
+
+	public String fetchproducts(ModelMap model, HttpSession session)
+	{
+	List<Product> list=productRepository.findByStatus(true);
+	if(session.getAttribute("customer")==null)
+	{
+		model.put("fail", "sessionexpired");
+		return "CustomerLogin";
+	}
+	else
+	{
+		if(list.isEmpty())
+		{
+			model.put("fail", "No Product available");
+			return "CustomerHome";
+		}
+		else
+		{
+			model.put("pass", list);
+			return "CustomerDisplayProduct";
+		}
+	}
+	}
+
+	public String addToCart(ModelMap model, HttpSession session, int id)
+	{
+		Customer customer = (Customer) session.getAttribute("customer");
+		if (customer == null) {
+			model.put("fail", "First Login to Add Product to Cart");
+			return "CustomerLogin";
+		} else {
+			Product product = productRepository.findById(id).orElse(null);
+			if(product.getStock()>=1)
+			{
+			ShoppingCart cart = customer.getShoppingCart();
+			if (cart == null) {
+				cart = this.cart;
+			}
+
+			List<Item> items = cart.getItems();
+
+			if (items == null) {
+				items = new ArrayList<Item>();
+			}
+
+			if (items.isEmpty()) {
+				item.setName(product.getName());
+				item.setPrice(product.getPrice());
+				item.setQuantity(1);
+				item.setDescription(product.getDescription());
+				item.setImage(product.getImage());
+				items.add(item);
+			} else {
+				boolean flag = false;
+				for (Item item : items) {
+					if (item.getName().equals(product.getName())) {
+						item.setQuantity(item.getQuantity() + 1);
+						item.setPrice(item.getPrice() + product.getPrice());
+						item.setDescription(product.getDescription());
+						item.setImage(product.getImage());
+						flag = false;
+						break;
+					} else {
+						flag = true;
+					}
+				}
+				if (flag) {
+					item.setName(product.getName());
+					item.setPrice(product.getPrice());
+					item.setQuantity(1);
+					item.setDescription(product.getDescription());
+					item.setImage(product.getImage());
+					items.add(item);
+				}
+
+			}
+
+			cart.setItems(items);
+			customer.setShoppingCart(cart);
+			
+			product.setStock(product.getStock()-1);
+			productRepository.save(product);
+			
+			session.removeAttribute("customer");
+			session.setAttribute("customer", dao.save(customer));
+			
+			model.put("pass", "Product Added to Cart Success");
+			return "CustomerHome";
+			}
+			else {
+				model.put("fail", "Out of Stock");
+				return "CustomerHome";
+			}
+		}
+	}
+
+	public String viewCart(ModelMap model, HttpSession session)  {
+		Customer customer = (Customer) session.getAttribute("customer");
+		if (customer == null) {
+			model.put("fail", "First Login to view Cart");
+			return "CustomerLogin";
+		} else {
+
+			if (customer.getShoppingCart() == null || customer.getShoppingCart().getItems() == null
+					|| customer.getShoppingCart().getItems().isEmpty()) {
+				model.put("fail", "No Items in cart");
+				return "CustomerHome";
+			} else {
+				List<Item> items = customer.getShoppingCart().getItems();
+				model.put("items", items);
+				return "CustomerDisplayCart";
+			}
+		}
+
+	}
+
+
+}

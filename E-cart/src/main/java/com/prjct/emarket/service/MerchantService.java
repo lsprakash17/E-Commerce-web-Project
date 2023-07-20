@@ -198,7 +198,7 @@ public class MerchantService {
 		Product product2 = merchantdao.findByName(product.getName());
 		if (product2 != null) {
 			product.setId(product2.getId());
-			product.setQuantity(product.getQuantity() + product2.getQuantity());
+			product.setStock(product.getStock() + product2.getStock());
 		}
 		List<Product> products = merchant.getProducts();
 		if (products == null) {

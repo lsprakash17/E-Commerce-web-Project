@@ -22,7 +22,7 @@ public class Product
     private String name;
     private double price;
     private String description;
-    private int quantity;
+    private int stock;
 
     @Lob
     @Column(columnDefinition = "MEDIUMBLOB")

@@ -1,0 +1,15 @@
+package com.prjct.emarket.dto;
+
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.Data;
+
+@Data
+@Entity
+@Component
+public class Wishlist 
+{
+@Id
+@GeneratedValue(strategy=gen)
+}

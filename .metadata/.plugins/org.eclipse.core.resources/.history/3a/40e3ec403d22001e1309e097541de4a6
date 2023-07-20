@@ -1,0 +1,20 @@
+package com.prjct.emarket.dto;
+
+
+@Entity
+@Data
+@Component
+
+public class Item 
+{
+		@Id
+		@GeneratedValue(strategy = GenerationType.IDENTITY)
+		private int id;
+		private String name;
+		private double price;
+		private String description;
+		private int quantity;
+		@Lob
+		@Column(columnDefinition = "MEDIUMBLOB")
+		private byte[] image;
+	}

@@ -1,5 +1,0 @@
-package com.prjct.emarket.repository;
-
-public interface CustomerRepository {
-
-}

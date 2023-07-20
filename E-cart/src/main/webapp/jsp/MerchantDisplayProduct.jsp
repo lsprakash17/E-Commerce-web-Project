@@ -37,7 +37,7 @@ ${pass}
 					<td><%=product.getName() %></td>
 					<td><%=product.getDescription() %></td>
 					<td><%=product.getPrice() %></td>
-					<td><%=product.getQuantity()%></td>
+					<td><%=product.getStock()%></td>
 					<td><%=product.getDescription() %></td>
 					<td><a href="/merchant/product-delete/<%=product.getId() %>"><button>Delete</button> </a></td>
 					<td><a href="/merchant/product-update/<%=product.getId()%>"%><button>Update</button> </a></td>
@@ -45,6 +45,6 @@ ${pass}
 			<% }%>
 		</tbody>
 	</table>
-<a href="/logout"><button>Logout</button></a> <br> <a href="/merchant/product-view"><button>Back</button> </a>	
+<a href="/logout"><button>Logout</button></a> <br> <a href="/jsp/MerchantHome.jsp"><button>Back</button> </a>	
 </body>
 </html>

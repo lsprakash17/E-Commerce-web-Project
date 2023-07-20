@@ -10,7 +10,7 @@
 <form action="/merchant/product-add" method="post" enctype="multipart/form-data">
 Name: <input type="text" name="name"> <br>
 Price: <input type="text" name="price"> <br>
-Quality: <input type="text" name="quantity"> <br>
+Quality: <input type="text" name="stock"> <br>
 Image: <input type="file" name="pic"> <br>
 Description: <input type="text" name="description"><br>
 <button>Add Product</button> <button type="reset">Cancel</button>
